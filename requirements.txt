@@ -1,0 +1,18 @@
+# KrishiDrishti — Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# ── Web Framework ──────────────────────────────────────────────────────
+flask>=3.0.0
+Pillow>=10.0.0
+
+# ── Machine Learning (Transfer Learning, CNN Classification) ──────────
+torch>=2.1.0
+torchvision>=0.16.0
+
+# ── Data & Evaluation ─────────────────────────────────────────────────
+numpy>=1.26.0
+
+# ── Optional: GPU acceleration ────────────────────────────────────────
+# For CUDA GPU support, install the matching torch+CUDA build from:
+# https://pytorch.org/get-started/locally/
+# e.g.: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121

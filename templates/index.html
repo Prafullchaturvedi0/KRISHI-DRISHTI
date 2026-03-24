@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KrishiDrishti — कृषि रोग निदान</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+/* ── Reset & Base ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green:       #2D6A4F;
+  --green-mid:   #40916C;
+  --green-light: #52B788;
+  --green-pale:  #D8F3DC;
+  --green-xpale: #F0FBF3;
+  --amber:       #D4A017;
+  --amber-pale:  #FFF8E7;
+  --red:         #C1121F;
+  --red-pale:    #FFF0F0;
+  --blue:        #1A6FA8;
+  --blue-pale:   #EBF5FC;
+  --ink:         #1A1A1A;
+  --ink-mid:     #4A4A4A;
+  --ink-muted:   #7A7A7A;
+  --border:      #E2E8E4;
+  --surface:     #F7FBF8;
+  --white:       #FFFFFF;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.10);
+  --radius:      12px;
+  --radius-sm:   8px;
+}
+
+body {
+  font-family: 'Segoe UI', 'Noto Sans Devanagari', Arial, sans-serif;
+  background: var(--surface);
+  color: var(--ink);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── Layout ────────────────────────────────────────────────────────── */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 1.25rem; }
+
+/* ── Header ────────────────────────────────────────────────────────── */
+header {
+  background: var(--green);
+  color: #fff;
+  padding: 0;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.25rem; max-width: 1100px; margin: 0 auto;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 36px; height: 36px; background: rgba(255,255,255,0.15);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.logo-text h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+.logo-text p  { font-size: 11px; opacity: 0.8; }
+.nav-pills { display: flex; gap: 4px; }
+.nav-pill {
+  padding: 5px 14px; border-radius: 20px; border: none; cursor: pointer;
+  font-size: 12px; font-weight: 600; transition: all 0.15s;
+  background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.85);
+}
+.nav-pill.active, .nav-pill:hover {
+  background: rgba(255,255,255,0.25); color: #fff;
+}
+
+/* ── Tabs Content ──────────────────────────────────────────────────── */
+.tab-panel { display: none; padding: 1.5rem 0 3rem; }
+.tab-panel.active { display: block; }
+
+/* ── Upload Section ────────────────────────────────────────────────── */
+.upload-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 700px) { .upload-grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.card-title {
+  font-size: 14px; font-weight: 700; color: var(--green);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem;
+  padding-bottom: 0.5rem; border-bottom: 2px solid var(--green-pale);
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ── Drop Zone ─────────────────────────────────────────────────────── */
+.dropzone {
+  border: 2px dashed var(--green-light);
+  border-radius: var(--radius-sm); padding: 2.5rem 1rem;
+  text-align: center; cursor: pointer;
+  transition: all 0.2s; background: var(--green-xpale);
+  position: relative;
+}
+.dropzone:hover, .dropzone.dragover {
+  border-color: var(--green); background: var(--green-pale);
+}
+.dropzone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+}
+.dz-icon { font-size: 40px; margin-bottom: 0.5rem; }
+.dz-text { font-size: 14px; color: var(--ink-mid); margin-bottom: 0.25rem; }
+.dz-hint { font-size: 11px; color: var(--ink-muted); }
+
+.preview-wrap {
+  display: none; text-align: center; margin-top: 1rem;
+}
+.preview-img {
+  max-width: 200px; max-height: 200px; border-radius: var(--radius-sm);
+  border: 2px solid var(--green-light); object-fit: cover;
+}
+.preview-name { font-size: 11px; color: var(--ink-muted); margin-top: 4px; }
+
+.btn-predict {
+  display: block; width: 100%; margin-top: 1rem;
+  padding: 0.75rem; background: var(--green); color: #fff;
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  font-size: 15px; font-weight: 700; letter-spacing: 0.02em;
+  transition: background 0.15s; font-family: inherit;
+}
+.btn-predict:hover { background: var(--green-mid); }
+.btn-predict:disabled { background: #aaa; cursor: not-allowed; }
+
+/* ── Result Panel ──────────────────────────────────────────────────── */
+.result-placeholder {
+  text-align: center; padding: 3rem 1rem;
+  color: var(--ink-muted); font-size: 14px;
+}
+.result-placeholder .ph-icon { font-size: 48px; margin-bottom: 0.5rem; }
+
+.result-main { display: none; }
+
+.disease-banner {
+  border-radius: var(--radius-sm); padding: 1rem 1.25rem;
+  margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 12px;
+}
+.disease-banner.healthy { background: var(--green-pale); border-left: 4px solid var(--green); }
+.disease-banner.diseased { background: var(--red-pale);  border-left: 4px solid var(--red); }
+.disease-banner.uncertain{ background: var(--amber-pale); border-left: 4px solid var(--amber); }
+.banner-icon { font-size: 28px; flex-shrink: 0; }
+.banner-title { font-size: 17px; font-weight: 700; margin-bottom: 2px; }
+.banner-sub   { font-size: 12px; color: var(--ink-mid); }
+.banner-class { font-size: 11px; color: var(--ink-muted); font-style: italic; margin-top: 2px; }
+
+/* ── Confidence Bar ────────────────────────────────────────────────── */
+.conf-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem;
+}
+.conf-label { font-size: 12px; color: var(--ink-muted); min-width: 100px; }
+.conf-track {
+  flex: 1; height: 10px; background: var(--border); border-radius: 5px; overflow: hidden;
+}
+.conf-fill {
+  height: 100%; border-radius: 5px;
+  transition: width 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.conf-fill.high   { background: var(--green); }
+.conf-fill.medium { background: var(--amber); }
+.conf-fill.low    { background: var(--red); }
+.conf-pct { font-size: 13px; font-weight: 700; min-width: 42px; text-align: right; }
+
+/* ── Top-3 Predictions ─────────────────────────────────────────────── */
+.top3-row {
+  display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap;
+}
+.top3-card {
+  flex: 1; min-width: 100px;
+  padding: 0.6rem 0.75rem; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--surface);
+  font-size: 12px; text-align: center;
+}
+.top3-card.top-pick {
+  border-color: var(--green); background: var(--green-xpale);
+}
+.top3-prob { font-size: 18px; font-weight: 700; color: var(--green); }
+.top3-name { font-size: 10px; color: var(--ink-muted); margin-top: 2px; line-height: 1.3; }
+.top3-hindi{ font-size: 11px; color: var(--ink-mid); font-weight: 600; }
+
+/* ── Treatment Box ─────────────────────────────────────────────────── */
+.treatment-box {
+  background: var(--blue-pale); border-left: 3px solid var(--blue);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 0.85rem 1rem; margin-top: 0.75rem;
+}
+.treatment-label { font-size: 11px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.treatment-text  { font-size: 13px; color: var(--ink); line-height: 1.6; }
+
+/* ── Uncertainty Warning ───────────────────────────────────────────── */
+.uncertainty-warn {
+  background: var(--amber-pale); border-left: 3px solid var(--amber);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 0.75rem 1rem; margin-top: 0.75rem;
+  font-size: 12px; color: #7A5C0A;
+}
+
+/* ── Stats Row ─────────────────────────────────────────────────────── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  margin-top: 0.75rem;
+}
+.stat-cell {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.6rem 0.5rem; text-align: center;
+}
+.stat-val   { font-size: 16px; font-weight: 700; color: var(--green); }
+.stat-label { font-size: 10px; color: var(--ink-muted); }
+
+/* ── Spinner ───────────────────────────────────────────────────────── */
+.spinner {
+  display: none; text-align: center; padding: 2rem;
+}
+.spin-ring {
+  width: 44px; height: 44px; border: 3px solid var(--green-pale);
+  border-top-color: var(--green); border-radius: 50%;
+  margin: 0 auto 0.75rem;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Demo Badge ────────────────────────────────────────────────────── */
+.demo-badge {
+  display: inline-block; padding: 2px 8px;
+  background: var(--amber-pale); color: var(--amber);
+  border: 1px solid #DDB840; border-radius: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  vertical-align: middle; margin-left: 6px;
+}
+
+/* ── Training Dashboard ────────────────────────────────────────────── */
+.dash-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 700px) { .dash-grid { grid-template-columns: 1fr 1fr; } }
+
+.metric-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+.metric-val   { font-size: 26px; font-weight: 700; color: var(--green); line-height: 1; }
+.metric-label { font-size: 11px; color: var(--ink-muted); margin-top: 4px; }
+.metric-note  { font-size: 10px; color: var(--green-mid); margin-top: 2px; }
+
+.chart-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+}
+@media (max-width: 700px) { .chart-grid { grid-template-columns: 1fr; } }
+
+.chart-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+.chart-title {
+  font-size: 13px; font-weight: 700; color: var(--ink-mid);
+  margin-bottom: 1rem; padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.chart-note {
+  font-size: 11px; color: var(--ink-muted); margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* ── Concept Cards ─────────────────────────────────────────────────── */
+.concepts-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+  margin-top: 1rem;
+}
+@media (max-width: 700px) { .concepts-grid { grid-template-columns: 1fr; } }
+
+.concept-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+.concept-tag {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; margin-bottom: 0.5rem;
+  background: var(--green-pale); color: var(--green);
+}
+.concept-name { font-size: 14px; font-weight: 700; margin-bottom: 0.4rem; }
+.concept-desc { font-size: 12px; color: var(--ink-mid); line-height: 1.6; }
+.concept-link { font-size: 11px; color: var(--green); font-style: italic; margin-top: 0.4rem; }
+
+/* ── Section Headers ───────────────────────────────────────────────── */
+.section-head {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 1.25rem; padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--green-pale);
+}
+.section-head h2 { font-size: 16px; font-weight: 700; color: var(--green); }
+
+/* ── Footer ────────────────────────────────────────────────────────── */
+footer {
+  background: var(--green); color: rgba(255,255,255,0.7);
+  text-align: center; padding: 1.25rem;
+  font-size: 11px; margin-top: 2rem;
+}
+footer strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- ── Header ────────────────────────────────────────────────────────── -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🌾</div>
+      <div class="logo-text">
+        <h1>KrishiDrishti &nbsp;<span style="font-weight:400;opacity:.75">कृषि दृष्टि</span></h1>
+        <p>AI-Powered Crop Disease Detection &nbsp;|&nbsp; ML Course Project</p>
+      </div>
+    </div>
+    <div class="nav-pills">
+      <button class="nav-pill active" onclick="showTab('diagnose')">🔍 Diagnose</button>
+      <button class="nav-pill" onclick="showTab('training')">📊 Training</button>
+      <button class="nav-pill" onclick="showTab('concepts')">📚 Concepts</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- TAB 1: DIAGNOSE                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div id="tab-diagnose" class="tab-panel active">
+  <div class="container">
+    <div class="upload-grid">
+
+      <!-- Left: Upload -->
+      <div>
+        <div class="card">
+          <div class="card-title">🌿 पत्ती की फोटो अपलोड करें</div>
+
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="file-input" accept="image/*" onchange="onFileSelect(event)">
+            <div class="dz-icon">📷</div>
+            <div class="dz-text">Click or drag a leaf photo here</div>
+            <div class="dz-hint">JPG, PNG supported · Max 16 MB</div>
+          </div>
+
+          <div class="preview-wrap" id="preview-wrap">
+            <img id="preview-img" class="preview-img" src="" alt="Preview">
+            <div class="preview-name" id="preview-name"></div>
+          </div>
+
+          <button class="btn-predict" id="btn-predict" onclick="runPredict()" disabled>
+            🔍 &nbsp;रोग पहचानें
+          </button>
+        </div>
+
+        <!-- How it works box -->
+        <div class="card" style="margin-top:1rem; font-size:13px; color:var(--ink-mid);">
+          <div class="card-title">⚙️ How the Model Works</div>
+          <p style="margin-bottom:.6rem;">
+            <strong>1. Preprocessing:</strong> Your leaf image is resized to 224×224 and normalized
+            using ImageNet mean/std (required for the pre-trained backbone).
+          </p>
+          <p style="margin-bottom:.6rem;">
+            <strong>2. Feature Extraction:</strong> A frozen MobileNetV2 backbone (trained on 1.2M
+            ImageNet images) extracts 1280 visual features via convolutional layers.
+          </p>
+          <p style="margin-bottom:.6rem;">
+            <strong>3. Classification:</strong> A fine-tuned dense head maps features → 38-class
+            softmax, giving <em>P(disease | image)</em> for each class.
+          </p>
+          <p>
+            <strong>4. Uncertainty Check:</strong> If confidence &lt;60% or Shannon entropy &gt;2.5,
+            the model flags the result as uncertain and recommends expert consultation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Result -->
+      <div>
+        <div class="card" style="min-height:300px;">
+          <div class="card-title">📋 निदान परिणाम
+            <span id="demo-badge" class="demo-badge" style="display:none">DEMO MODE</span>
+          </div>
+
+          <!-- Loading spinner -->
+          <div class="spinner" id="spinner">
+            <div class="spin-ring"></div>
+            <div style="font-size:13px;color:var(--ink-muted);">Model is analyzing the image…</div>
+            <div style="font-size:11px;color:var(--ink-muted);margin-top:4px;">Running inference (CNN forward pass)</div>
+          </div>
+
+          <!-- Placeholder -->
+          <div class="result-placeholder" id="result-placeholder">
+            <div class="ph-icon">🌱</div>
+            <div>Upload a leaf photo to get an AI diagnosis</div>
+            <div style="font-size:11px;margin-top:4px;">Supports wheat, soybean, cotton, tomato, potato &amp; more</div>
+          </div>
+
+          <!-- Result (hidden until prediction) -->
+          <div class="result-main" id="result-main">
+
+            <!-- Disease banner -->
+            <div class="disease-banner" id="disease-banner">
+              <div class="banner-icon" id="banner-icon"></div>
+              <div>
+                <div class="banner-title" id="banner-title"></div>
+                <div class="banner-sub"  id="banner-sub"></div>
+                <div class="banner-class" id="banner-class"></div>
+              </div>
+            </div>
+
+            <!-- Confidence bar -->
+            <div class="conf-row">
+              <div class="conf-label">Confidence</div>
+              <div class="conf-track">
+                <div class="conf-fill" id="conf-fill" style="width:0%"></div>
+              </div>
+              <div class="conf-pct" id="conf-pct">—</div>
+            </div>
+
+            <!-- Entropy bar -->
+            <div class="conf-row">
+              <div class="conf-label">Certainty (inv.H)</div>
+              <div class="conf-track">
+                <div class="conf-fill" id="entropy-fill" style="width:0%"></div>
+              </div>
+              <div class="conf-pct" id="entropy-pct">—</div>
+            </div>
+
+            <!-- Top-3 -->
+            <div style="font-size:11px;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.08em;margin:1rem 0 0.4rem;">
+              Top-3 Predictions — P(disease | image)
+            </div>
+            <div class="top3-row" id="top3-row"></div>
+
+            <!-- Treatment -->
+            <div class="treatment-box" id="treatment-box">
+              <div class="treatment-label">💊 उपचार / Treatment</div>
+              <div class="treatment-text" id="treatment-text"></div>
+            </div>
+
+            <!-- Uncertainty warning -->
+            <div class="uncertainty-warn" id="uncertainty-warn" style="display:none">
+              ⚠️ <strong>मॉडल अनिश्चित है।</strong> कृपया अपने नजदीकी KVK (कृषि विज्ञान केंद्र) से सलाह लें।
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-row">
+              <div class="stat-cell">
+                <div class="stat-val" id="stat-entropy">—</div>
+                <div class="stat-label">Shannon Entropy H(P)</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val" id="stat-imgsize">—</div>
+                <div class="stat-label">Image size (px)</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val" id="stat-classes">38</div>
+                <div class="stat-label">Disease classes</div>
+              </div>
+            </div>
+
+          </div><!-- /result-main -->
+        </div><!-- /card -->
+      </div><!-- /right col -->
+
+    </div><!-- /grid -->
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- TAB 2: TRAINING DASHBOARD                                          -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div id="tab-training" class="tab-panel">
+  <div class="container">
+
+    <!-- Metric summary cards -->
+    <div class="dash-grid">
+      <div class="metric-card">
+        <div class="metric-val" id="m-acc">—</div>
+        <div class="metric-label">Test Accuracy</div>
+        <div class="metric-note">Unbiased generalization estimate</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="m-f1">—</div>
+        <div class="metric-label">Macro F1 Score</div>
+        <div class="metric-note">Handles class imbalance</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="m-epochs">—</div>
+        <div class="metric-label">Training Epochs</div>
+        <div class="metric-note">Early stopping applied</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="m-samples">—</div>
+        <div class="metric-label">Test Set Samples</div>
+        <div class="metric-note">10% held-out split</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <!-- Loss Curve -->
+      <div class="chart-card">
+        <div class="chart-title">📉 Bias-Variance Diagnostic — Loss Curves</div>
+        <canvas id="loss-chart" height="200"></canvas>
+        <div class="chart-note">
+          Train loss vs validation loss. A widening gap (val &gt;&gt; train) signals overfitting (high variance).
+          Converging curves indicate a well-regularized model. Dropout + early stopping prevent divergence.
+        </div>
+      </div>
+      <!-- Accuracy Curve -->
+      <div class="chart-card">
+        <div class="chart-title">📈 Accuracy Curves — Supervised Learning Progress</div>
+        <canvas id="acc-chart" height="200"></canvas>
+        <div class="chart-note">
+          Both curves should rise and converge. If training accuracy is high but val accuracy plateaus,
+          the model is memorizing training labels (overfitting). Early stopping triggers here.
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-grid" style="margin-top:1.5rem;">
+      <!-- LR Schedule -->
+      <div class="chart-card">
+        <div class="chart-title">⚡ Learning Rate Schedule</div>
+        <canvas id="lr-chart" height="200"></canvas>
+        <div class="chart-note">
+          ReduceLROnPlateau halves the learning rate when val loss stops improving (patience=3).
+          This is adaptive hyperparameter tuning — an informed search over the learning rate schedule.
+        </div>
+      </div>
+      <!-- Probability Distribution -->
+      <div class="chart-card">
+        <div class="chart-title">🔵 Probability Distribution — P(disease | image)</div>
+        <canvas id="prob-chart" height="200"></canvas>
+        <div class="chart-note">
+          The softmax output from the last prediction. A peaked distribution = high confidence.
+          A flat distribution = high entropy → uncertainty flag → recommend expert consultation.
+        </div>
+      </div>
+    </div>
+
+    <!-- Architecture summary -->
+    <div class="card" style="margin-top:1.5rem;">
+      <div class="card-title">🏗️ Model Architecture — Transfer Learning</div>
+      <div style="font-size:13px;color:var(--ink-mid);display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div>
+          <p style="margin-bottom:.5rem;"><strong>Backbone:</strong> MobileNetV2 (pre-trained, ImageNet)</p>
+          <p style="margin-bottom:.5rem;"><strong>Input:</strong> 224 × 224 × 3 RGB tensor (normalized)</p>
+          <p style="margin-bottom:.5rem;"><strong>Feature map:</strong> 1280-dimensional embedding (global avg pool)</p>
+          <p style="margin-bottom:.5rem;"><strong>Head:</strong> BatchNorm → Dropout(0.4) → FC(512) → FC(38)</p>
+        </div>
+        <div>
+          <p style="margin-bottom:.5rem;"><strong>Frozen layers:</strong> MobileNetV2 blocks 0–15 (universal features)</p>
+          <p style="margin-bottom:.5rem;"><strong>Fine-tuned:</strong> Last 3 blocks + custom head (disease features)</p>
+          <p style="margin-bottom:.5rem;"><strong>Optimizer:</strong> SGD(lr=0.01, momentum=0.9, wd=1e-4)</p>
+          <p style="margin-bottom:.5rem;"><strong>Loss:</strong> Cross-entropy with class weighting</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- TAB 3: COURSE CONCEPTS                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div id="tab-concepts" class="tab-panel">
+  <div class="container">
+    <div class="section-head">
+      <h2>📚 Course Concepts Applied in KrishiDrishti</h2>
+    </div>
+    <div class="concepts-grid">
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 1</div>
+        <div class="concept-name">Intelligent Agent</div>
+        <div class="concept-desc">The app IS an agent. PEAS framework: <em>Performance</em>=F1 accuracy; <em>Environment</em>=farm field photos; <em>Actuators</em>=Hindi diagnosis output; <em>Sensors</em>=phone camera. Rationality: maximize correct diagnoses given observed images.</div>
+        <div class="concept-link">→ classifier.py: InferenceEngine.predict()</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 2</div>
+        <div class="concept-name">Search (Hyperparameter Tuning)</div>
+        <div class="concept-desc">Finding optimal dropout rate, learning rate, and fine-tune blocks is a search problem over hyperparameter space. Grid search = uninformed; Bayesian optimization = informed search with a surrogate model. ReduceLROnPlateau is an adaptive informed search.</div>
+        <div class="concept-link">→ app.py: Trainer.fit() + LR scheduler</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 3</div>
+        <div class="concept-name">Probability Theory</div>
+        <div class="concept-desc">Softmax outputs form a proper conditional probability distribution P(disease_k|image). Shannon entropy H(P) = -Σ p·log(p) measures prediction uncertainty. Low entropy → confident; high entropy → uncertain → flag for expert review.</div>
+        <div class="concept-link">→ classifier.py: predict_proba(), entropy calc</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 3</div>
+        <div class="concept-name">Linear Algebra / Optimization</div>
+        <div class="concept-desc">The dense classification head is a linear transformation: logits = W·x + b. Training minimizes L(W,b) = -log P(correct class) via stochastic gradient descent. Gradient clipping prevents exploding gradients in deep networks.</div>
+        <div class="concept-link">→ classifier.py: CropDiseaseClassifier.forward()</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 4</div>
+        <div class="concept-name">Supervised Learning</div>
+        <div class="concept-desc">Classic supervised classification: labelled pairs (leaf_image, disease_label). The model learns mapping f: X→Y that generalizes to unseen images. 80/10/10 train/val/test split. The test set is touched only once — the unbiased generalization estimator.</div>
+        <div class="concept-link">→ classifier.py: build_dataloaders(), Trainer</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 4</div>
+        <div class="concept-name">Overfitting &amp; Regularization</div>
+        <div class="concept-desc">Four anti-overfitting mechanisms: (1) Data augmentation expands effective dataset size. (2) Dropout randomly zeroes neurons during training (Dropout=0.4). (3) L2 weight decay penalizes large weights. (4) Early stopping halts training when val loss diverges.</div>
+        <div class="concept-link">→ classifier.py: get_transforms(), Trainer.fit()</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 4</div>
+        <div class="concept-name">Bias-Variance Tradeoff</div>
+        <div class="concept-desc">Diagnostic: train_loss&gt;&gt;val_loss → underfitting (high bias); val_loss&gt;&gt;train_loss → overfitting (high variance). MobileNetV2 hits the sweet spot for our dataset size. Dropout rate and fine_tune_blocks are the primary knobs on this tradeoff.</div>
+        <div class="concept-link">→ Training tab: Loss Curves chart</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 4</div>
+        <div class="concept-name">Bayesian Statistics</div>
+        <div class="concept-desc">Model outputs posterior P(disease|image) ∝ P(image|disease)·P(disease). Class weights encode the prior P(disease) from seasonal prevalence data. Uncertain predictions (low posterior, high entropy) are flagged — Bayesian caution applied to high-stakes agricultural advice.</div>
+        <div class="concept-link">→ classifier.py: InferenceEngine.predict()</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 4</div>
+        <div class="concept-name">Feature Learning</div>
+        <div class="concept-desc">CNNs learn hierarchical representations: edge detectors (layer 1) → texture patterns (layer 5) → disease-specific lesion shapes (layer 16+). Global average pooling compresses the 7×7×1280 feature map to a 1280-d vector — the model's learned representation of the leaf.</div>
+        <div class="concept-link">→ classifier.py: CropDiseaseClassifier.features</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Case Study</div>
+        <div class="concept-name">Transfer Learning</div>
+        <div class="concept-desc">Pre-trained MobileNetV2 backbone (ImageNet) is frozen. Only the last 3 blocks + custom head are fine-tuned on crop disease images. This transfers universal visual knowledge to the agricultural domain — requiring only ~5,000 labelled examples instead of millions.</div>
+        <div class="concept-link">→ classifier.py: CropDiseaseClassifier.__init__()</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 4</div>
+        <div class="concept-name">Curse of Dimensionality</div>
+        <div class="concept-desc">A raw 224×224×3 image has 150,528 dimensions. CNNs solve this by projecting images onto a low-dimensional disease-relevant manifold via convolutional weight sharing. Transfer learning further compresses this — the backbone already maps images into a compact 1280-d representation.</div>
+        <div class="concept-link">→ classifier.py: self.pool, self.features</div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-tag">Unit 4</div>
+        <div class="concept-name">Estimators &amp; Macro F1</div>
+        <div class="concept-desc">Accuracy alone is biased when class frequencies differ (rust is 10× more common than mosaic virus). Macro F1 = mean F1 across all classes = (2·Precision·Recall)/(P+R). This is an unbiased performance estimator that gives equal weight to rare diseases — critical for real-world impact.</div>
+        <div class="concept-link">→ classifier.py: evaluate_model()</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>KrishiDrishti — कृषि दृष्टि</strong> &nbsp;|&nbsp;
+  AI Course Final Project &nbsp;|&nbsp;
+  Built with Transfer Learning · Supervised Classification · Bayesian Uncertainty
+</footer>
+
+<!-- ── Scripts ────────────────────────────────────────────────────── -->
+<script>
+// ── Tab navigation ────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (name === 'training') loadTrainingCharts();
+}
+
+// ── File selection ────────────────────────────────────────────────────
+function onFileSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  document.getElementById('preview-img').src = url;
+  document.getElementById('preview-name').textContent = file.name + ' (' + (file.size/1024).toFixed(0) + ' KB)';
+  document.getElementById('preview-wrap').style.display = 'block';
+  document.getElementById('btn-predict').disabled = false;
+
+  // Reset result
+  document.getElementById('result-placeholder').style.display = 'block';
+  document.getElementById('result-main').style.display = 'none';
+  document.getElementById('spinner').style.display = 'none';
+}
+
+// ── Drag and drop ─────────────────────────────────────────────────────
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    document.getElementById('file-input').files = e.dataTransfer.files;
+    onFileSelect({ target: { files: [file] } });
+  }
+});
+
+// ── Prediction ────────────────────────────────────────────────────────
+async function runPredict() {
+  const fi = document.getElementById('file-input');
+  if (!fi.files[0]) return;
+
+  // Show spinner
+  document.getElementById('result-placeholder').style.display = 'none';
+  document.getElementById('result-main').style.display = 'none';
+  document.getElementById('spinner').style.display = 'block';
+  document.getElementById('btn-predict').disabled = true;
+
+  const formData = new FormData();
+  formData.append('image', fi.files[0]);
+
+  try {
+    const resp = await fetch('/predict', { method: 'POST', body: formData });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    renderResult(data);
+  } catch (err) {
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('result-placeholder').style.display = 'block';
+    document.getElementById('result-placeholder').innerHTML =
+      '<div style="color:var(--red)">⚠ Error: ' + err.message + '</div>';
+  } finally {
+    document.getElementById('btn-predict').disabled = false;
+  }
+}
+
+// ── Render prediction result ──────────────────────────────────────────
+function renderResult(data) {
+  document.getElementById('spinner').style.display = 'none';
+  document.getElementById('result-placeholder').style.display = 'none';
+
+  // Demo badge
+  document.getElementById('demo-badge').style.display = data.demo_mode ? 'inline-block' : 'none';
+
+  // Banner
+  const banner = document.getElementById('disease-banner');
+  const icon   = document.getElementById('banner-icon');
+  const title  = document.getElementById('banner-title');
+  const sub    = document.getElementById('banner-sub');
+  const cls    = document.getElementById('banner-class');
+
+  banner.className = 'disease-banner ' + (
+    data.uncertain  ? 'uncertain' :
+    data.is_healthy ? 'healthy'   : 'diseased'
+  );
+  icon.textContent  = data.is_healthy ? '✅' : data.uncertain ? '⚠️' : '🔴';
+  title.textContent = data.hindi_name;
+  sub.textContent   = data.is_healthy
+    ? 'पौधा स्वस्थ दिखता है।'
+    : (data.uncertain ? 'Uncertain — consult expert' : 'Disease detected');
+  cls.textContent   = data.top_class.replace(/___/g, ' → ').replace(/_/g, ' ');
+
+  // Confidence bar
+  const conf = Math.round(data.confidence * 100);
+  const confFill = document.getElementById('conf-fill');
+  confFill.style.width = '0%';
+  confFill.className = 'conf-fill ' + (conf >= 75 ? 'high' : conf >= 55 ? 'medium' : 'low');
+  setTimeout(() => { confFill.style.width = conf + '%'; }, 50);
+  document.getElementById('conf-pct').textContent = conf + '%';
+
+  // Entropy bar (inverse: lower entropy = higher bar)
+  const maxEntropy = 3.6;
+  const certPct = Math.max(0, Math.round((1 - data.entropy / maxEntropy) * 100));
+  const entFill = document.getElementById('entropy-fill');
+  entFill.style.width = '0%';
+  entFill.className = 'conf-fill ' + (certPct >= 70 ? 'high' : certPct >= 45 ? 'medium' : 'low');
+  setTimeout(() => { entFill.style.width = certPct + '%'; }, 80);
+  document.getElementById('entropy-pct').textContent = certPct + '%';
+
+  // Top-3
+  const row = document.getElementById('top3-row');
+  row.innerHTML = data.top3.map((item, i) => `
+    <div class="top3-card ${i === 0 ? 'top-pick' : ''}">
+      <div class="top3-prob">${(item.probability * 100).toFixed(1)}%</div>
+      <div class="top3-hindi">${item.hindi || item.class}</div>
+      <div class="top3-name">${item.class.replace(/___/g, ' ').replace(/_/g, ' ')}</div>
+    </div>
+  `).join('');
+
+  // Treatment
+  document.getElementById('treatment-text').textContent = data.treatment;
+
+  // Uncertainty warning
+  document.getElementById('uncertainty-warn').style.display =
+    data.uncertain ? 'block' : 'none';
+
+  // Stats
+  document.getElementById('stat-entropy').textContent = data.entropy.toFixed(2);
+  document.getElementById('stat-imgsize').textContent = data.image_size
+    ? data.image_size[0] + '×' + data.image_size[1] : '—';
+
+  // Show result
+  document.getElementById('result-main').style.display = 'block';
+
+  // Update prob chart if on training tab
+  updateProbChart(data.probabilities || {});
+  window._lastProbs = data.probabilities || {};
+}
+
+// ── Training Charts ───────────────────────────────────────────────────
+let lossChart, accChart, lrChart, probChart;
+let chartsLoaded = false;
+
+async function loadTrainingCharts() {
+  if (chartsLoaded) return;
+  chartsLoaded = true;
+
+  try {
+    const resp = await fetch('/history');
+    const data = await resp.json();
+    const h = data.history;
+    const ev = data.evaluation;
+    const epochs = h.train_loss.length;
+    const labels = Array.from({length: epochs}, (_, i) => 'Ep ' + (i+1));
+
+    // Update metric cards
+    document.getElementById('m-acc').textContent =
+      ev ? (ev.accuracy * 100).toFixed(1) + '%' : '—';
+    document.getElementById('m-f1').textContent =
+      ev ? (ev.macro_f1 * 100).toFixed(1) + '%' : '—';
+    document.getElementById('m-epochs').textContent = epochs;
+    document.getElementById('m-samples').textContent =
+      ev ? ev.num_samples.toLocaleString() : '—';
+
+    const gridColor = 'rgba(0,0,0,0.06)';
+    const baseOpts = {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { font: { size: 11 } } } },
+      scales: {
+        x: { grid: { color: gridColor }, ticks: { font: { size: 10 } } },
+        y: { grid: { color: gridColor }, ticks: { font: { size: 10 } } }
+      }
+    };
+
+    // Loss chart
+    lossChart = new Chart(document.getElementById('loss-chart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Train Loss', data: h.train_loss,
+            borderColor: '#40916C', backgroundColor: 'rgba(64,145,108,0.08)',
+            borderWidth: 2, pointRadius: 1, tension: 0.3, fill: true },
+          { label: 'Val Loss', data: h.val_loss,
+            borderColor: '#C1121F', backgroundColor: 'rgba(193,18,31,0.06)',
+            borderWidth: 2, pointRadius: 1, tension: 0.3, fill: true },
+        ]
+      },
+      options: { ...baseOpts, scales: { ...baseOpts.scales,
+        y: { ...baseOpts.scales.y, title: { display: true, text: 'Cross-Entropy Loss', font: { size: 10 } } }
+      }}
+    });
+
+    // Accuracy chart
+    accChart = new Chart(document.getElementById('acc-chart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Train Acc', data: h.train_acc.map(v => +(v*100).toFixed(1)),
+            borderColor: '#40916C', borderWidth: 2, pointRadius: 1, tension: 0.3 },
+          { label: 'Val Acc', data: h.val_acc.map(v => +(v*100).toFixed(1)),
+            borderColor: '#1A6FA8', borderDash: [4,3],
+            borderWidth: 2, pointRadius: 1, tension: 0.3 },
+        ]
+      },
+      options: { ...baseOpts, scales: { ...baseOpts.scales,
+        y: { ...baseOpts.scales.y,
+          min: 0, max: 100,
+          title: { display: true, text: 'Accuracy (%)', font: { size: 10 } }
+        }
+      }}
+    });
+
+    // LR chart
+    lrChart = new Chart(document.getElementById('lr-chart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Learning Rate', data: h.lr,
+          borderColor: '#D4A017', borderWidth: 2, pointRadius: 1, tension: 0,
+          stepped: true
+        }]
+      },
+      options: { ...baseOpts, scales: { ...baseOpts.scales,
+        y: { ...baseOpts.scales.y, type: 'linear',
+          title: { display: true, text: 'LR', font: { size: 10 } }
+        }
+      }}
+    });
+
+    // Prob chart (placeholder until a prediction is made)
+    initProbChart(window._lastProbs || {});
+
+  } catch (e) {
+    console.error('Chart load error:', e);
+  }
+}
+
+function initProbChart(probs) {
+  const keys = Object.keys(probs);
+  const vals = keys.map(k => +(probs[k] * 100).toFixed(2));
+  const colors = vals.map(v => v > 50 ? '#2D6A4F' : v > 20 ? '#40916C' : '#9DC1AD');
+
+  probChart = new Chart(document.getElementById('prob-chart'), {
+    type: 'bar',
+    data: {
+      labels: keys.length ? keys.map(k => k.replace(/___/g, ' ').replace(/_/g,' ').substring(0,22)) : ['Upload a leaf to see probabilities'],
+      datasets: [{
+        label: 'P(disease | image) %',
+        data: keys.length ? vals : [0],
+        backgroundColor: colors,
+        borderWidth: 0, borderRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 9 } } },
+        y: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.06)' },
+             ticks: { font: { size: 10 }, callback: v => v + '%' },
+             title: { display: true, text: 'Probability (%)', font: { size: 10 } }
+        }
+      }
+    }
+  });
+}
+
+function updateProbChart(probs) {
+  if (!probChart) return;
+  const keys = Object.keys(probs);
+  const vals = keys.map(k => +(probs[k] * 100).toFixed(2));
+  const colors = vals.map(v => v > 50 ? '#2D6A4F' : v > 20 ? '#40916C' : '#9DC1AD');
+  probChart.data.labels = keys.map(k => k.replace(/___/g,' ').replace(/_/g,' ').substring(0,22));
+  probChart.data.datasets[0].data = vals;
+  probChart.data.datasets[0].backgroundColor = colors;
+  probChart.update();
+}
+</script>
+
+</body>
+</html>

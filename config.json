@@ -1,0 +1,184 @@
+{
+  "_comment": "KrishiDrishti — Runtime Configuration. Edit values here; the app reads this file at startup.",
+
+  "app": {
+    "name": "KrishiDrishti",
+    "name_hindi": "कृषि दृष्टि",
+    "version": "1.0.0",
+    "description": "AI-powered crop disease detection for smallholder farmers in rural Madhya Pradesh",
+    "host": "0.0.0.0",
+    "port": 5000,
+    "debug": false,
+    "max_upload_mb": 16,
+    "log_level": "INFO"
+  },
+
+  "model": {
+    "path": "model/best_model.pt",
+    "history_path": "model/training_history.json",
+    "num_classes": 38,
+    "input_size": [224, 224],
+    "backbone": "mobilenet_v2",
+    "backbone_pretrained": true,
+    "imagenet_mean": [0.485, 0.456, 0.406],
+    "imagenet_std":  [0.229, 0.224, 0.225]
+  },
+
+  "inference": {
+    "uncertainty_confidence_threshold": 0.60,
+    "uncertainty_entropy_threshold": 2.5,
+    "top_k_predictions": 3,
+    "device": "auto"
+  },
+
+  "training": {
+    "data_dir": "data/plantvillage",
+    "save_path": "model/best_model.pt",
+    "epochs": 30,
+    "batch_size": 32,
+    "num_workers": 4,
+    "val_fraction": 0.10,
+    "test_fraction": 0.10,
+    "random_seed": 42,
+
+    "optimizer": {
+      "type": "SGD",
+      "learning_rate": 0.01,
+      "momentum": 0.9,
+      "weight_decay": 1e-4,
+      "nesterov": true,
+      "grad_clip_norm": 1.0
+    },
+
+    "lr_scheduler": {
+      "type": "ReduceLROnPlateau",
+      "mode": "min",
+      "factor": 0.5,
+      "patience": 3,
+      "verbose": true
+    },
+
+    "early_stopping": {
+      "enabled": true,
+      "patience": 7,
+      "min_delta": 1e-4
+    },
+
+    "regularization": {
+      "dropout_rate": 0.40,
+      "fine_tune_blocks": 3
+    },
+
+    "augmentation": {
+      "resize": [256, 256],
+      "crop": 224,
+      "horizontal_flip_prob": 0.5,
+      "vertical_flip_prob": 0.3,
+      "rotation_degrees": 30,
+      "brightness_jitter": 0.3,
+      "contrast_jitter": 0.3,
+      "saturation_jitter": 0.2,
+      "hue_jitter": 0.05,
+      "grayscale_prob": 0.05
+    }
+  },
+
+  "disease_classes": [
+    "Apple___Apple_scab",
+    "Apple___Black_rot",
+    "Apple___Cedar_apple_rust",
+    "Apple___healthy",
+    "Corn_(maize)___Cercospora_leaf_spot_Gray_leaf_spot",
+    "Corn_(maize)___Common_rust",
+    "Corn_(maize)___Northern_Leaf_Blight",
+    "Corn_(maize)___healthy",
+    "Grape___Black_rot",
+    "Grape___Esca_(Black_Measles)",
+    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+    "Grape___healthy",
+    "Potato___Early_blight",
+    "Potato___Late_blight",
+    "Potato___healthy",
+    "Tomato___Bacterial_spot",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___Spider_mites_Two-spotted_spider_mite",
+    "Tomato___Target_Spot",
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "Tomato___Tomato_mosaic_virus",
+    "Tomato___healthy",
+    "Wheat___Brown_rust",
+    "Wheat___Yellow_rust",
+    "Wheat___Powdery_mildew",
+    "Wheat___Healthy",
+    "Soybean___Bacterial_pustule",
+    "Soybean___Frogeye_leaf_spot",
+    "Soybean___Sudden_death_syndrome",
+    "Soybean___healthy",
+    "Cotton___Leaf_curl_virus",
+    "Cotton___Bacterial_blight",
+    "Cotton___Alternaria_leaf_spot",
+    "Cotton___healthy",
+    "Unknown___unclassified"
+  ],
+
+  "hindi_names": {
+    "Wheat___Brown_rust":              "गेहूं - भूरी फफूंद",
+    "Wheat___Yellow_rust":             "गेहूं - पीली फफूंद",
+    "Wheat___Powdery_mildew":          "गेहूं - चूर्णिल आसिता",
+    "Wheat___Healthy":                 "गेहूं - स्वस्थ",
+    "Soybean___Bacterial_pustule":     "सोयाबीन - जीवाणु पस्च्यूल",
+    "Soybean___Frogeye_leaf_spot":     "सोयाबीन - मेंढक नेत्र धब्बा",
+    "Soybean___Sudden_death_syndrome": "सोयाबीन - अचानक मृत्यु",
+    "Soybean___healthy":               "सोयाबीन - स्वस्थ",
+    "Cotton___Leaf_curl_virus":        "कपास - पत्ती मुड़न वायरस",
+    "Cotton___Bacterial_blight":       "कपास - जीवाणु झुलसा",
+    "Cotton___Alternaria_leaf_spot":   "कपास - आल्टरनेरिया धब्बा",
+    "Cotton___healthy":                "कपास - स्वस्थ",
+    "Tomato___Early_blight":           "टमाटर - अगेती झुलसा",
+    "Tomato___Late_blight":            "टमाटर - पछेती झुलसा",
+    "Tomato___healthy":                "टमाटर - स्वस्थ"
+  },
+
+  "treatments": {
+    "Wheat___Brown_rust":
+      "Propiconazole 25% EC का 0.1% घोल छिड़कें। 15 दिन बाद दोहराएं।",
+    "Wheat___Yellow_rust":
+      "Tebuconazole 250 EC @ 1ml/L पानी का छिड़काव करें।",
+    "Wheat___Powdery_mildew":
+      "Sulphur 80% WP @ 2g/L या Triadimefon 25% WP @ 1g/L का छिड़काव करें।",
+    "Soybean___Bacterial_pustule":
+      "Copper oxychloride 50% WP @ 3g/L पानी का छिड़काव करें।",
+    "Soybean___Frogeye_leaf_spot":
+      "Carbendazim 50% WP @ 1g/L या Thiophanate methyl का उपयोग करें।",
+    "Soybean___Sudden_death_syndrome":
+      "संक्रमित पौधे उखाड़ें। अगले सीजन में प्रतिरोधी किस्म लगाएं।",
+    "Cotton___Leaf_curl_virus":
+      "संक्रमित पौधे उखाड़ें। सफेद मक्खी नियंत्रण हेतु Imidacloprid 17.8 SL @ 0.5ml/L।",
+    "Cotton___Bacterial_blight":
+      "Streptomycin sulphate 90% + Tetracycline 10% @ 300ppm का छिड़काव करें।",
+    "Cotton___Alternaria_leaf_spot":
+      "Mancozeb 75% WP @ 2.5g/L का छिड़काव 10 दिन के अंतर पर करें।",
+    "Tomato___Early_blight":
+      "Mancozeb 75% WP @ 2.5g/L पानी का छिड़काव 7-10 दिन के अंतर पर।",
+    "Tomato___Late_blight":
+      "Metalaxyl + Mancozeb @ 2.5g/L का तुरंत छिड़काव करें।",
+    "Unknown___unclassified":
+      "नमूना निकटतम KVK (कृषि विज्ञान केंद्र) को दिखाएं।"
+  },
+
+  "paths": {
+    "model_dir":     "model",
+    "data_dir":      "data",
+    "static_dir":    "static",
+    "templates_dir": "templates",
+    "logs_dir":      "logs"
+  },
+
+  "demo_mode": {
+    "enabled_when_no_model": true,
+    "description": "Returns realistic simulated predictions when model/best_model.pt is missing"
+  }
+}
