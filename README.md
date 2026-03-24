@@ -1,7 +1,7 @@
 # KrishiDrishti — कृषि दृष्टि
-## AI-Powered Crop Disease Detection | ML Course Final Project
+## AI-Powered Crop Disease Detection | Fundamentals In AI and ML Course Project
 
-A complete, runnable implementation of the KrishiDrishti proposal.
+A complete, runnable implementation of the KrishiDrishti project.
 Every design decision maps directly to a topic in the course outline.
 
 ---
@@ -19,7 +19,7 @@ python app.py
 http://localhost:5000
 ```
 
-The app runs in **DEMO mode** out of the box — it returns realistic simulated
+The system runs in **DEMO mode** out of the box — it returns realistic simulated
 predictions so you can see the full UI and probability outputs immediately,
 without needing a trained model or GPU.
 
