@@ -619,29 +619,55 @@ for img_file in os.listdir(image_folder):
 
 ## 📸 Screenshots & Results
 
-> All screenshots are stored in the `Images/` folder of this repository.
+Below are screenshots from running the program (click images to enlarge):
 
-<details>
-<summary><strong>View all figures with descriptions</strong></summary>
+![Figure 1 — Initial interface](Images/Screenshot%202026-03-24%20205000.png)
 
-| Figure | Screenshot | Description |
-|---|---|---|
-| Fig 1 | `Screenshot 2026-03-24 205000.png` | **Initial interface** — clean home page with branding, three navigation tabs (Diagnose · Training · Concepts), and empty drag-and-drop upload zone |
-| Fig 2 | `Screenshot 2026-03-24 205103.png` | **Upload interface** — drag-and-drop zone with format guidelines; Diagnose button greyed out before image selection |
-| Fig 3 | `Screenshot 2026-03-24 205217.png` | **High-confidence disease result** — red banner with Hindi name, 87% confidence bar, top-3 differential cards, blue treatment box |
-| Fig 4 | `Screenshot 2026-03-24 205237.png` | **Confidence & entropy detail** — dual progress bars; stat cells showing entropy value, image dimensions, and class count |
-| Fig 5 | `Screenshot 2026-03-24 205333.png` | **Treatment recommendations** — Hindi fungicide instructions for Wheat Brown Rust with dosage and schedule |
-| Fig 6 | `Screenshot 2026-03-24 205411.png` | **Healthy plant detection** — green banner (94% confidence); treatment advises continued regular care |
-| Fig 7 | `Screenshot 2026-03-24 205523.png` | **Viral disease** — Cotton Leaf Curl Virus at 76% with Imidacloprid treatment for whitefly control |
-| Fig 8 | `Screenshot 2026-03-24 205610.png` | **Uncertain prediction** — amber banner; entropy 2.89 > threshold; Hindi expert-referral warning |
-| Fig 9 | `Screenshot 2026-03-24 205703.png` | **Probability distribution chart** — top-10 disease posteriors; bar colour scales with probability |
-| Fig 10 | `Screenshot 2026-03-24 205739.png` | **Complete prediction card** — all fields: disease, Hindi name, confidence, entropy, top-3, treatment, metadata |
-| Fig 11 | `Screenshot 2026-03-24 205801.png` | **Training Dashboard tab** — four metric cards + bias-variance loss curves + accuracy progression chart |
-| Fig 12 | `Screenshot 2026-03-24 205918.png` | **Prediction history** — session log with timestamps, disease labels, confidence, and entropy values |
+_Figure 1 — Initial interface — clean home page with branding, three navigation tabs (Diagnose · Training · Concepts), and empty drag-and-drop upload zone_
 
-</details>
+![Figure 2 — Upload interface](Images/Screenshot%202026-03-24%20205103.png)
 
----
+_Figure 2 — Upload interface — drag-and-drop zone with format guidelines; Diagnose button greyed out before image selection_
+
+![Figure 3 — High-confidence disease result](Images/Screenshot%202026-03-24%20205217.png)
+
+_Figure 3 — High-confidence disease result — red banner with Hindi name, 87% confidence bar, top-3 differential cards, blue treatment box_
+
+![Figure 4 — Confidence & entropy detail](Images/Screenshot%202026-03-24%20205237.png)
+
+_Figure 4 — Confidence & entropy detail — dual progress bars; stat cells showing entropy value, image dimensions, and class count_
+
+![Figure 5 — Treatment recommendations](Images/Screenshot%202026-03-24%20205333.png)
+
+_Figure 5 — Treatment recommendations — Hindi fungicide instructions for Wheat Brown Rust with dosage and schedule_
+
+![Figure 6 — Healthy plant detection](Images/Screenshot%202026-03-24%20205411.png)
+
+_Figure 6 — Healthy plant detection — green banner (94% confidence); treatment advises continued regular care_
+
+![Figure 7 — Viral disease](Images/Screenshot%202026-03-24%20205523.png)
+
+_Figure 7 — Viral disease — Cotton Leaf Curl Virus at 76% with Imidacloprid treatment for whitefly control_
+
+![Figure 8 — Uncertain prediction](Images/Screenshot%202026-03-24%20205610.png)
+
+_Figure 8 — Uncertain prediction — amber banner; entropy 2.89 > threshold; Hindi expert-referral warning_
+
+![Figure 9 — Probability distribution chart](Images/Screenshot%202026-03-24%20205703.png)
+
+_Figure 9 — Probability distribution chart — top-10 disease posteriors; bar colour scales with probability_
+
+![Figure 10 — Complete prediction card](Images/Screenshot%202026-03-24%20205739.png)
+
+_Figure 10 — Complete prediction card — all fields: disease, Hindi name, confidence, entropy, top-3, treatment, metadata_
+
+![Figure 11 — Training Dashboard tab](Images/Screenshot%202026-03-24%20205801.png)
+
+_Figure 11 — Training Dashboard tab — four metric cards + bias-variance loss curves + accuracy progression chart_
+
+![Figure 12 — Prediction history](Images/Screenshot%202026-03-24%20205918.png)
+
+_Figure 12 — Prediction history — session log with timestamps, disease labels, confidence, and entropy values_
 
 ## 🧪 Testing
 
