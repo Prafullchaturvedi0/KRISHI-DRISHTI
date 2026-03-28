@@ -627,7 +627,7 @@ _Figure 1 — Initial interface — clean home page with branding, three navigat
 
 ![Figure 2 — Upload interface](Images/Screenshot%202026-03-24%20205103.png)
 
-_Figure 2 — Upload interface — drag-and-drop zone with format guidelines; Diagnose button greyed out before image selection_
+_Figure 2 — Upload interface — drag-and-drop zone with format guidelines; Diagnose button greyed out before image selection and Healthy plant detection — green banner (94% confidence); treatment advises continued regular care_
 
 ![Figure 3 — High-confidence disease result](Images/Screenshot%202026-03-24%20205217.png)
 
@@ -637,37 +637,37 @@ _Figure 3 — High-confidence disease result — red banner with Hindi name, 87%
 
 _Figure 4 — Confidence & entropy detail — dual progress bars; stat cells showing entropy value, image dimensions, and class count_
 
-![Figure 5 — Treatment recommendations](Images/Screenshot%202026-03-24%20205333.png)
+![Figure 5 — Concepts Tab](Images/Screenshot%202026-03-24%20205333.png)
 
-_Figure 5 — Treatment recommendations — Hindi fungicide instructions for Wheat Brown Rust with dosage and schedule_
+_Figure 5 — Concepts Tab — Course Concepts Applied in KrishiDrishti (Units 1–4: Intelligent Agent, Hyperparameter Search, Probability Theory, Linear Algebra/Optimization, Supervised Learning, Overfitting & Regularisation)_
 
-![Figure 6 — Healthy plant detection](Images/Screenshot%202026-03-24%20205411.png)
+![Figure 6 — Concepts Tab](Images/Screenshot%202026-03-24%20205411.png)
 
-_Figure 6 — Healthy plant detection — green banner (94% confidence); treatment advises continued regular care_
+_Figure 6 — Concepts Tab — Course Concepts Applied in KrishiDrishti (Continued: Bias-Variance Tradeoff, Bayesian Statistics, Feature Learning, Transfer Learning, Curse of Dimensionality, Estimators & Macro F1)_
 
-![Figure 7 — Viral disease](Images/Screenshot%202026-03-24%20205523.png)
+![Figure 7 — app.py](Images/Screenshot%202026-03-24%20205523.png)
 
-_Figure 7 — Viral disease — Cotton Leaf Curl Virus at 76% with Imidacloprid treatment for whitefly control_
+_Figure 7 — app.py — Flask Web Server Implementation Showing Routes (/predict, /history, /health) and Server Startup in Demo Mode_
 
-![Figure 8 — Uncertain prediction](Images/Screenshot%202026-03-24%20205610.png)
+![Figure 8 — classifier.py](Images/Screenshot%202026-03-24%20205610.png)
 
-_Figure 8 — Uncertain prediction — amber banner; entropy 2.89 > threshold; Hindi expert-referral warning_
+_Figure 8 — classifier.py — Crop Disease Classifier Module with Course Principles Annotated (Supervised Learning, Transfer Learning, Classification, Feature Learning, Overfitting Control)_
 
-![Figure 9 — Probability distribution chart](Images/Screenshot%202026-03-24%20205703.png)
+![Figure 9 — VS Code Terminal](Images/Screenshot%202026-03-24%20205703.png)
 
-_Figure 9 — Probability distribution chart — top-10 disease posteriors; bar colour scales with probability_
+_Figure 9 — VS Code Terminal — Flask Development Server Running in Demo Mode (PyTorch Not Installed) with Active HTTP Request Logs_
 
-![Figure 10 — Complete prediction card](Images/Screenshot%202026-03-24%20205739.png)
+![Figure 10 — classifier.py](Images/Screenshot%202026-03-24%20205739.png)
 
-_Figure 10 — Complete prediction card — all fields: disease, Hindi name, confidence, entropy, top-3, treatment, metadata_
+_Figure 10 — classifier.py — Disease Class Taxonomy List and Hindi Name Lookup Table (हिंदी नाम कोश) Covering Wheat, Soybean, Cotton, and Tomato Diseases_
 
-![Figure 11 — Training Dashboard tab](Images/Screenshot%202026-03-24%20205801.png)
+![Figure 11 — index.html](Images/Screenshot%202026-03-24%20205801.png)
 
-_Figure 11 — Training Dashboard tab — four metric cards + bias-variance loss curves + accuracy progression chart_
+_Figure 11 — index.html — CSS Design System: Root Variables, Colour Palette (Green Theme), Shadows, and Border Radius Tokens_
 
-![Figure 12 — Prediction history](Images/Screenshot%202026-03-24%20205918.png)
+![Figure 12 — index.html](Images/Screenshot%202026-03-24%20205918.png)
 
-_Figure 12 — Prediction history — session log with timestamps, disease labels, confidence, and entropy values_
+_Figure 12 — index.html — CSS Layout, Sticky Header Styling, Navigation Pills, and Logo Component Styles_
 
 ## 🧪 Testing
 
